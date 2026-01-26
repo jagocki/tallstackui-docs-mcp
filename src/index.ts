@@ -19,26 +19,34 @@ interface DocumentationPage {
 }
 
 // Known documentation sections and components
+// Based on TallStackUI v2 GitHub repository and documentation site
 const KNOWN_SECTIONS = {
-  "getting-started": ["documentation", "installation", "configuration"],
+  "getting-started": ["documentation", "installation", "configuration", "starter-kit"],
   "ui": [
     "alert",
     "avatar",
     "badge",
     "banner",
+    "boolean",
     "button",
     "card",
+    "carousel",
     "clipboard",
     "dropdown",
+    "environment",
     "icon",
     "layout",
     "link",
     "loading",
     "modal",
+    "progress",
+    "rating",
+    "signature",
     "slide",
     "stats",
     "step",
     "tab",
+    "table",
     "tag",
     "toast",
     "tooltip",
@@ -46,6 +54,7 @@ const KNOWN_SECTIONS = {
   "form": [
     "checkbox",
     "color",
+    "currency",
     "date",
     "input",
     "number",
@@ -54,6 +63,7 @@ const KNOWN_SECTIONS = {
     "radio",
     "range",
     "select",
+    "tag",
     "textarea",
     "time",
     "toggle",

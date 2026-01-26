@@ -41,7 +41,7 @@ The server can be configured using the following environment variables:
 
 ### With Claude Desktop
 
-Add this to your Claude Desktop configuration file:
+Add this to your Claude Desktop configuration file (see `claude_desktop_config.example.json` for a complete example):
 
 **MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`

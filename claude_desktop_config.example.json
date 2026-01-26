@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "tallstackui-docs": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/tallstackui-docs-mcp/dist/index.js"
+      ],
+      "env": {
+        "TALLSTACKUI_DOCS_URL": "https://tallstackui.com/docs/v2",
+        "MAX_CONTENT_SIZE": "15000"
+      }
+    }
+  }
+}

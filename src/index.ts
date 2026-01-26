@@ -9,7 +9,8 @@ import {
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 
-const BASE_URL = "https://tallstackui.com/docs/v2";
+const BASE_URL = process.env.TALLSTACKUI_DOCS_URL || "https://tallstackui.com/docs/v2";
+const MAX_CONTENT_SIZE = parseInt(process.env.MAX_CONTENT_SIZE || "15000", 10);
 
 interface DocumentationPage {
   title: string;
@@ -98,7 +99,7 @@ async function fetchDocPage(path: string): Promise<DocumentationPage> {
   return {
     title,
     url,
-    content: content.substring(0, 15000), // Limit content size
+    content: content.substring(0, MAX_CONTENT_SIZE), // Limit content size to avoid large responses
   };
 }
 

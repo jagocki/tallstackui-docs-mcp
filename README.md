@@ -28,6 +28,17 @@ npm run build
 
 ## Usage
 
+### Configuration
+
+The server can be configured using the following environment variables:
+
+- `TALLSTACKUI_DOCS_URL` (optional): Base URL for TallStackUI documentation. Defaults to `https://tallstackui.com/docs/v2`
+- `MAX_CONTENT_SIZE` (optional): Maximum content size in characters for documentation pages. Defaults to `15000`
+
+### Requirements
+
+- Node.js >= 20.18.1
+
 ### With Claude Desktop
 
 Add this to your Claude Desktop configuration file:

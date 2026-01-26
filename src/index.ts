@@ -47,7 +47,6 @@ const KNOWN_SECTIONS = {
     "step",
     "tab",
     "table",
-    "tag",
     "toast",
     "tooltip",
   ],

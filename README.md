@@ -9,7 +9,7 @@ A Model Context Protocol (MCP) server that provides access to TallStackUI v2 doc
 - **List Components**: Browse all available components organized by category
 - **Get Page Content**: Fetch any documentation page by path
 
-This server provides access to **52 documentation pages** covering TallStackUI v2 components and guides.
+This server provides access to **51 documentation pages** covering TallStackUI v2 components and guides.
 
 ## Installation
 
@@ -136,12 +136,12 @@ Get the content of a specific documentation page.
 TallStackUI components are organized into the following categories:
 
 - **Getting Started** (4 pages): Documentation, installation, configuration, starter kit
-- **UI Components** (27 components): Alert, avatar, badge, banner, boolean, button, card, carousel, clipboard, dropdown, environment, icon, layout, link, loading, modal, progress, rating, signature, slide, stats, step, tab, table, tag, toast, tooltip
+- **UI Components** (26 components): Alert, avatar, badge, banner, boolean, button, card, carousel, clipboard, dropdown, environment, icon, layout, link, loading, modal, progress, rating, signature, slide, stats, step, tab, table, toast, tooltip
 - **Form Components** (16 components): Checkbox, color, currency, date, input, number, password, pin, radio, range, select, tag, textarea, time, toggle, upload
 - **Interaction Components** (2 components): Dialog, reaction
 - **Other** (3 pages): Theme, helpers, upgrade guide
 
-**Total: 52 documentation pages**
+**Total: 51 documentation pages**
 
 ## Development
 

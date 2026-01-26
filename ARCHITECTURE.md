@@ -38,7 +38,7 @@
 │                   https://tallstackui.com/docs/v2/              │
 │                                                                  │
 │  • Getting Started                                              │
-│  • UI Components (27)                                           │
+│  • UI Components (26)                                           │
 │  • Form Components (16)                                         │
 │  • Interaction Components (2)                                   │
 │  • Other Resources (3)                                          │
@@ -53,8 +53,8 @@
 - configuration
 - starter-kit
 
-### UI Components (27)
-alert, avatar, badge, banner, boolean, button, card, carousel, clipboard, dropdown, environment, icon, layout, link, loading, modal, progress, rating, signature, slide, stats, step, tab, table, tag, toast, tooltip
+### UI Components (26)
+alert, avatar, badge, banner, boolean, button, card, carousel, clipboard, dropdown, environment, icon, layout, link, loading, modal, progress, rating, signature, slide, stats, step, tab, table, toast, tooltip
 
 ### Form Components (16)
 checkbox, color, currency, date, input, number, password, pin, radio, range, select, tag, textarea, time, toggle, upload

@@ -8,14 +8,81 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
+import { createHash } from "crypto";
+import { mkdir, readFile, writeFile, stat } from "fs/promises";
+import { join } from "path";
 
 const BASE_URL = process.env.TALLSTACKUI_DOCS_URL || "https://tallstackui.com/docs/v2";
 const MAX_CONTENT_SIZE = parseInt(process.env.MAX_CONTENT_SIZE || "15000", 10);
+const CACHE_DIR = process.env.CACHE_DIR || ".cache";
+const CACHE_TTL = parseInt(process.env.CACHE_TTL || "3600", 10) * 1000; // Default 1 hour in milliseconds
 
 interface DocumentationPage {
   title: string;
   url: string;
   content: string;
+}
+
+interface CachedPage extends DocumentationPage {
+  cachedAt: number;
+}
+
+/**
+ * Generate a cache key from a path
+ */
+function getCacheKey(path: string): string {
+  return createHash("md5").update(path).digest("hex");
+}
+
+/**
+ * Get cached page if it exists and is not expired
+ */
+async function getCachedPage(path: string): Promise<DocumentationPage | null> {
+  try {
+    const cacheKey = getCacheKey(path);
+    const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
+    
+    const fileStats = await stat(cachePath);
+    const now = Date.now();
+    
+    // Check if cache is expired
+    if (now - fileStats.mtimeMs > CACHE_TTL) {
+      return null;
+    }
+    
+    const cached = await readFile(cachePath, "utf-8");
+    const cachedPage: CachedPage = JSON.parse(cached);
+    
+    // Return without cachedAt field
+    const { cachedAt, ...page } = cachedPage;
+    return page;
+  } catch (error) {
+    // Cache miss or error reading cache
+    return null;
+  }
+}
+
+/**
+ * Save page to cache
+ */
+async function cachePage(path: string, page: DocumentationPage): Promise<void> {
+  try {
+    // Ensure cache directory exists
+    await mkdir(CACHE_DIR, { recursive: true });
+    
+    const cacheKey = getCacheKey(path);
+    const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
+    
+    const cachedPage: CachedPage = {
+      ...page,
+      cachedAt: Date.now(),
+    };
+    
+    await writeFile(cachePath, JSON.stringify(cachedPage, null, 2), "utf-8");
+  } catch (error) {
+    // Silently fail cache writes - not critical
+    console.error("Failed to cache page:", error);
+  }
 }
 
 // Known documentation sections and components
@@ -73,9 +140,16 @@ const KNOWN_SECTIONS = {
 };
 
 /**
- * Fetch and parse a documentation page
+ * Fetch and parse a documentation page (with caching)
  */
 async function fetchDocPage(path: string): Promise<DocumentationPage> {
+  // Try to get from cache first
+  const cached = await getCachedPage(path);
+  if (cached) {
+    return cached;
+  }
+
+  // Cache miss - fetch from web
   const url = `${BASE_URL}/${path}`;
   const response = await fetch(url);
 
@@ -105,11 +179,16 @@ async function fetchDocPage(path: string): Promise<DocumentationPage> {
     .replace(/\n\s*\n/g, "\n\n")
     .trim();
 
-  return {
+  const page: DocumentationPage = {
     title,
     url,
     content: content.substring(0, MAX_CONTENT_SIZE), // Limit content size to avoid large responses
   };
+
+  // Cache the page for future requests
+  await cachePage(path, page);
+
+  return page;
 }
 
 /**

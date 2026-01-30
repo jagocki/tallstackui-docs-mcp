@@ -33,3 +33,6 @@ logs/
 test.mjs
 test-client.mjs
 test-offline.mjs
+
+# Cache
+.cache/

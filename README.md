@@ -8,6 +8,7 @@ A Model Context Protocol (MCP) server that provides access to TallStackUI v2 doc
 - **Get Component Info**: Retrieve detailed documentation for specific components
 - **List Components**: Browse all available components organized by category
 - **Get Page Content**: Fetch any documentation page by path
+- **Local Caching**: Automatically caches documentation pages locally for faster access and offline support
 
 This server provides access to **51 documentation pages** covering TallStackUI v2 components and guides.
 
@@ -36,6 +37,22 @@ The server can be configured using the following environment variables:
 
 - `TALLSTACKUI_DOCS_URL` (optional): Base URL for TallStackUI documentation. Defaults to `https://tallstackui.com/docs/v2`
 - `MAX_CONTENT_SIZE` (optional): Maximum content size in characters for documentation pages. Defaults to `15000`
+- `CACHE_DIR` (optional): Directory for caching documentation pages. Defaults to `.cache`
+- `CACHE_TTL` (optional): Cache time-to-live in seconds. Defaults to `3600` (1 hour)
+
+#### Caching
+
+The server automatically caches fetched documentation pages locally to improve performance and enable offline access. The cache:
+
+- Stores pages in the `.cache` directory (configurable via `CACHE_DIR`)
+- Expires after 1 hour by default (configurable via `CACHE_TTL`)
+- Reduces load on the TallStackUI website
+- Provides faster response times after the first fetch
+
+To clear the cache, simply delete the cache directory:
+```bash
+rm -rf .cache
+```
 
 ### Requirements
 
@@ -70,6 +87,65 @@ Or if installed globally via npm:
   }
 }
 ```
+
+### With VSCode
+
+To use this MCP server with VSCode, you'll need to install an MCP-compatible extension.
+
+#### Using Cline Extension (Recommended)
+
+1. **Install the Cline extension** from the VSCode marketplace:
+   - Open VSCode
+   - Go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
+   - Search for "Cline"
+   - Click Install
+
+2. **Configure the MCP server**:
+   - Open VSCode settings (File > Preferences > Settings or Ctrl+,)
+   - Search for "Cline MCP"
+   - Click "Edit in settings.json"
+   - Add the following configuration:
+
+```json
+{
+  "cline.mcpServers": {
+    "tallstackui-docs": {
+      "command": "node",
+      "args": ["/absolute/path/to/tallstackui-docs-mcp/dist/index.js"]
+    }
+  }
+}
+```
+
+3. **Using the tools**:
+   - Open Cline in VSCode (click the Cline icon in the sidebar)
+   - The TallStackUI documentation tools will be available to the AI assistant
+   - Ask questions like "Show me the TallStackUI button component documentation"
+
+#### Alternative: Using Continue Extension
+
+1. **Install Continue extension** from the VSCode marketplace
+
+2. **Configure MCP server** in Continue's config file (`~/.continue/config.json`):
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "tallstackui-docs",
+      "command": "node",
+      "args": ["/absolute/path/to/tallstackui-docs-mcp/dist/index.js"]
+    }
+  ]
+}
+```
+
+#### Tips for VSCode Usage
+
+- Make sure to use absolute paths in your configuration
+- Restart VSCode after adding the MCP server configuration
+- Check the extension's output panel if the server doesn't connect
+- The cache will be created in the server's directory, making subsequent queries faster
 
 ### With Other MCP Clients
 

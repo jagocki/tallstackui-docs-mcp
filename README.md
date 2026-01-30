@@ -111,11 +111,16 @@ To use this MCP server with VSCode, you'll need to install an MCP-compatible ext
   "cline.mcpServers": {
     "tallstackui-docs": {
       "command": "node",
-      "args": ["/absolute/path/to/tallstackui-docs-mcp/dist/index.js"]
+      "args": ["/absolute/path/to/tallstackui-docs-mcp/dist/index.js"],
+      "env": {
+        "CACHE_DIR": "/absolute/path/to/tallstackui-docs-mcp/.cache"
+      }
     }
   }
 }
 ```
+
+**Important:** Use absolute paths for both the server executable and the CACHE_DIR to ensure the cache is created in the correct location. See `vscode_settings.example.json` for a complete example.
 
 3. **Using the tools**:
    - Open Cline in VSCode (click the Cline icon in the sidebar)

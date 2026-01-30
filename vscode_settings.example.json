@@ -6,7 +6,7 @@
         "/absolute/path/to/tallstackui-docs-mcp/dist/index.js"
       ],
       "env": {
-        "CACHE_DIR": ".cache",
+        "CACHE_DIR": "/absolute/path/to/tallstackui-docs-mcp/.cache",
         "CACHE_TTL": "3600",
         "MAX_CONTENT_SIZE": "15000"
       }

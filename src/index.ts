@@ -16,6 +16,14 @@ const BASE_URL = process.env.TALLSTACKUI_DOCS_URL || "https://tallstackui.com/do
 const MAX_CONTENT_SIZE = parseInt(process.env.MAX_CONTENT_SIZE || "15000", 10);
 const CACHE_DIR = process.env.CACHE_DIR || ".cache";
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || "3600", 10) * 1000; // Default 1 hour in milliseconds
+const CACHE_ENABLED = CACHE_TTL > 0; // Disable caching if TTL is 0 or negative
+
+// Ensure cache directory exists on startup
+if (CACHE_ENABLED) {
+  mkdir(CACHE_DIR, { recursive: true }).catch((error) => {
+    console.error("Warning: Failed to create cache directory:", error);
+  });
+}
 
 interface DocumentationPage {
   title: string;
@@ -38,6 +46,11 @@ function getCacheKey(path: string): string {
  * Get cached page if it exists and is not expired
  */
 async function getCachedPage(path: string): Promise<DocumentationPage | null> {
+  // Skip cache if disabled
+  if (!CACHE_ENABLED) {
+    return null;
+  }
+
   try {
     const cacheKey = getCacheKey(path);
     const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
@@ -66,10 +79,12 @@ async function getCachedPage(path: string): Promise<DocumentationPage | null> {
  * Save page to cache
  */
 async function cachePage(path: string, page: DocumentationPage): Promise<void> {
+  // Skip cache if disabled
+  if (!CACHE_ENABLED) {
+    return;
+  }
+
   try {
-    // Ensure cache directory exists
-    await mkdir(CACHE_DIR, { recursive: true });
-    
     const cacheKey = getCacheKey(path);
     const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
     

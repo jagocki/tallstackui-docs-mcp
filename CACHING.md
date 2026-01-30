@@ -83,7 +83,7 @@ export CACHE_TTL="0"
 ## Benefits
 
 ✅ Faster response times  
-✅ Offline support  
+✅ Offline access to previously fetched pages  
 ✅ Reduced server load  
 ✅ Easy to clear (rm -rf .cache)  
 ✅ No external dependencies

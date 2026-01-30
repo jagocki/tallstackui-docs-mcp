@@ -19,10 +19,16 @@ const CACHE_TTL = parseInt(process.env.CACHE_TTL || "3600", 10) * 1000; // Defau
 const CACHE_ENABLED = CACHE_TTL > 0; // Disable caching if TTL is 0 or negative
 
 // Ensure cache directory exists on startup
-if (CACHE_ENABLED) {
-  mkdir(CACHE_DIR, { recursive: true }).catch((error) => {
-    console.error("Warning: Failed to create cache directory:", error);
-  });
+let cacheInitialized = false;
+async function initCache(): Promise<void> {
+  if (CACHE_ENABLED && !cacheInitialized) {
+    try {
+      await mkdir(CACHE_DIR, { recursive: true });
+      cacheInitialized = true;
+    } catch (error) {
+      console.error("Warning: Failed to create cache directory:", error);
+    }
+  }
 }
 
 interface DocumentationPage {
@@ -55,16 +61,14 @@ async function getCachedPage(path: string): Promise<DocumentationPage | null> {
     const cacheKey = getCacheKey(path);
     const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
     
-    const fileStats = await stat(cachePath);
-    const now = Date.now();
-    
-    // Check if cache is expired
-    if (now - fileStats.mtimeMs > CACHE_TTL) {
-      return null;
-    }
-    
     const cached = await readFile(cachePath, "utf-8");
     const cachedPage: CachedPage = JSON.parse(cached);
+    
+    // Check if cache is expired using cachedAt field
+    const now = Date.now();
+    if (now - cachedPage.cachedAt > CACHE_TTL) {
+      return null;
+    }
     
     // Return without cachedAt field
     const { cachedAt, ...page } = cachedPage;
@@ -85,6 +89,9 @@ async function cachePage(path: string, page: DocumentationPage): Promise<void> {
   }
 
   try {
+    // Ensure cache directory is initialized
+    await initCache();
+    
     const cacheKey = getCacheKey(path);
     const cachePath = join(CACHE_DIR, `${cacheKey}.json`);
     
@@ -95,8 +102,10 @@ async function cachePage(path: string, page: DocumentationPage): Promise<void> {
     
     await writeFile(cachePath, JSON.stringify(cachedPage, null, 2), "utf-8");
   } catch (error) {
-    // Silently fail cache writes - not critical
-    console.error("Failed to cache page:", error);
+    // Non-critical error - don't disrupt normal operation
+    if (error instanceof Error) {
+      console.error(`Cache write failed: ${error.message}`);
+    }
   }
 }
 

@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server that provides access to TallStackUI v2 doc
 - **Get Component Info**: Retrieve detailed documentation for specific components
 - **List Components**: Browse all available components organized by category
 - **Get Page Content**: Fetch any documentation page by path
-- **Local Caching**: Automatically caches documentation pages locally for faster access and offline support
+- **Local Caching**: Automatically caches documentation pages locally for faster access and offline availability of previously fetched pages
 
 This server provides access to **51 documentation pages** covering TallStackUI v2 components and guides.
 
@@ -42,12 +42,13 @@ The server can be configured using the following environment variables:
 
 #### Caching
 
-The server automatically caches fetched documentation pages locally to improve performance and enable offline access. The cache:
+The server automatically caches fetched documentation pages locally to improve performance and enable offline access to previously fetched pages. The cache:
 
 - Stores pages in the `.cache` directory (configurable via `CACHE_DIR`)
 - Expires after 1 hour by default (configurable via `CACHE_TTL`)
 - Reduces load on the TallStackUI website
 - Provides faster response times after the first fetch
+- Enables offline access to pages that have been previously cached
 
 To clear the cache, simply delete the cache directory:
 ```bash

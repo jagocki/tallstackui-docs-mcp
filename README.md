@@ -202,8 +202,8 @@ List all available Larapex Charts documentation pages organized by category.
 
 Larapex Charts documentation is organized into the following categories:
 
-- **Examples** (4 pages): Installation, simple-example, more-charts, customization
-- **Advance** (5 pages): Charts with Eloquent, Charts with InertiaJS, Charts stubs, Host library, Support
+- **Examples** (4 pages): installation, simple-example, more-charts, customization
+- **Advance** (5 pages): charts-with-eloquent, charts-with-inertiajs, charts-stubs, host-library, support
 
 **Total: 9 documentation pages**
 

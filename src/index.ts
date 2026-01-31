@@ -186,14 +186,14 @@ async function searchDocs(query: string): Promise<string[]> {
   const results: string[] = [];
   const searchQuery = query.toLowerCase();
 
-  // Search through all known sections and components
+  // Search through all known sections and pages
   for (const [section, pages] of Object.entries(KNOWN_SECTIONS)) {
     for (const page of pages) {
       if (
         page.toLowerCase().includes(searchQuery) ||
         section.toLowerCase().includes(searchQuery)
       ) {
-        results.push(`${section}/${page}`);
+        results.push(page);
       }
     }
   }

@@ -1,4 +1,4 @@
-# TallStackUI Documentation MCP Server Architecture
+# Larapex Charts Documentation MCP Server Architecture
 
 ## Overview
 
@@ -11,15 +11,14 @@
                         │ stdio (JSON-RPC)
                         │
 ┌───────────────────────▼─────────────────────────────────────────┐
-│                   TallStackUI MCP Server                         │
+│                Larapex Charts MCP Server                         │
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────────┐ │
 │  │                    MCP Tools                                │ │
 │  │                                                             │ │
-│  │  • search_docs      - Search documentation                 │ │
-│  │  • list_components  - List all components                  │ │
-│  │  • get_component    - Get component docs                   │ │
-│  │  • get_page        - Get any doc page                      │ │
+│  │  • search_docs   - Search documentation                    │ │
+│  │  • list_pages    - List all documentation pages            │ │
+│  │  • get_page      - Get page content                        │ │
 │  └────────────────────────────────────────────────────────────┘ │
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────────┐ │
@@ -28,53 +27,61 @@
 │  │  • Web Scraping (cheerio)                                  │ │
 │  │  • HTML Parsing & Content Extraction                       │ │
 │  │  • Search & Filtering                                      │ │
+│  │  • Local Caching (MD5-based)                               │ │
 │  │  • Error Handling                                          │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│                                                                  │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │              Cache Layer (.cache/)                          │ │
+│  │                                                             │ │
+│  │  • File-based cache with MD5 keys                          │ │
+│  │  • Configurable TTL (default: 1 hour)                      │ │
+│  │  • Automatic expiration                                    │ │
+│  │  • ~98% performance improvement                            │ │
 │  └────────────────────────────────────────────────────────────┘ │
 └───────────────────────┬─────────────────────────────────────────┘
                         │
                         │ HTTPS
                         │
 ┌───────────────────────▼─────────────────────────────────────────┐
-│                   https://tallstackui.com/docs/v2/              │
+│              https://larapex-charts.netlify.app/                │
 │                                                                  │
-│  • Getting Started                                              │
-│  • UI Components (26)                                           │
-│  • Form Components (16)                                         │
-│  • Interaction Components (2)                                   │
-│  • Other Resources (3)                                          │
+│  • Examples (4 pages)                                           │
+│  • Advance (5 pages)                                            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Component Categories
+## Documentation Categories
 
-### Getting Started (4)
-- documentation
+### Examples (4)
 - installation
-- configuration
-- starter-kit
+- simple-example
+- more-charts
+- customization
 
-### UI Components (26)
-alert, avatar, badge, banner, boolean, button, card, carousel, clipboard, dropdown, environment, icon, layout, link, loading, modal, progress, rating, signature, slide, stats, step, tab, table, toast, tooltip
-
-### Form Components (16)
-checkbox, color, currency, date, input, number, password, pin, radio, range, select, tag, textarea, time, toggle, upload
-
-### Interaction Components (2)
-dialog, reaction
-
-### Other (3)
-theme, helpers, upgrade-guide
+### Advance (5)
+- charts-with-eloquent
+- charts-with-inertiajs
+- charts-stubs
+- host-library
+- support
 
 ## Configuration
 
 Environment Variables:
-- `TALLSTACKUI_DOCS_URL`: Base URL (default: https://tallstackui.com/docs/v2)
+- `LARAPEX_DOCS_URL`: Base URL (default: https://larapex-charts.netlify.app)
 - `MAX_CONTENT_SIZE`: Max content size (default: 15000 characters)
+- `CACHE_DIR`: Cache directory (default: .cache)
+- `CACHE_TTL`: Cache TTL in seconds (default: 3600, set to 0 to disable)
 
 ## Technology Stack
 
 - **Runtime**: Node.js >= 20.18.1
 - **Language**: TypeScript 5.7.3
-- **MCP SDK**: @modelcontextprotocol/sdk 1.25.3
+- **MCP SDK**: @modelcontextprotocol/sdk 1.25.2
 - **Web Scraping**: cheerio 1.0.0
 - **HTTP Client**: node-fetch 3.3.2
+
+## Caching Architecture
+
+See [CACHING.md](CACHING.md) for detailed caching architecture documentation.

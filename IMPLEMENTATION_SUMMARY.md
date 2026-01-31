@@ -2,14 +2,51 @@
 
 ## Overview
 
-Successfully implemented two requested features for the TallStackUI Documentation MCP Server:
+Successfully updated the MCP Server from TallStackUI to Larapex Charts documentation:
 
-1. **Local Caching System** - High-performance file-based caching
-2. **VSCode Integration Documentation** - Complete setup guide for VSCode users
+1. **Larapex Charts Documentation Support** - Comprehensive support for all documentation pages
+2. **Local Caching System** - High-performance file-based caching (preserved from original)
 
-## Question 1: Local Caching Implementation
+## Changes Made
 
-### Features Implemented
+### Core Implementation Updates
+
+- **BASE_URL**: Changed from `https://tallstackui.com/docs/v2` to `https://larapex-charts.netlify.app`
+- **Documentation Structure**: Updated KNOWN_SECTIONS to reflect Larapex Charts documentation:
+  - **Examples** (4 pages): installation, simple-example, more-charts, customization
+  - **Advance** (5 pages): charts-with-eloquent, charts-with-inertiajs, charts-stubs, host-library, support
+- **Server Name**: Updated from `tallstackui-docs-mcp` to `larapex-charts-docs-mcp`
+- **Environment Variable**: Changed `TALLSTACKUI_DOCS_URL` to `LARAPEX_DOCS_URL`
+
+### Tool Updates
+
+Simplified tool structure for Larapex Charts:
+1. **search_docs** - Search documentation by topic, chart type, or keyword
+2. **get_page** - Get content of specific documentation page
+3. **list_pages** - List all available documentation pages (renamed from list_components)
+
+**Removed**: `get_component` tool (not applicable to Larapex Charts documentation structure)
+
+### Package Updates
+
+- Updated `package.json` name, description, and keywords
+- Changed binary name from `tallstackui-docs-mcp` to `larapex-charts-docs-mcp`
+- Updated keywords to reflect Larapex Charts and ApexCharts
+
+### Documentation Updates
+
+- **README.md**: Complete rewrite for Larapex Charts
+  - Updated all examples and configuration
+  - Changed documentation references
+  - Updated tool descriptions
+- **CACHING.md**: Updated examples to use Larapex Charts paths
+- **IMPLEMENTATION_SUMMARY.md**: This file, documenting all changes
+
+## Caching Implementation (Preserved)
+
+The existing high-performance caching system was preserved:
+
+### Features
 
 - **File-based caching** using MD5-hashed filenames for safety
 - **Configurable cache directory** (default: `.cache`, via `CACHE_DIR` env var)
@@ -26,105 +63,25 @@ Successfully implemented two requested features for the TallStackUI Documentatio
 - **Improvement**: ~98% faster with cache
 - **Zero overhead** when caching is disabled (CACHE_TTL=0)
 
-### Technical Implementation
-
-```typescript
-// Configuration
-const CACHE_DIR = process.env.CACHE_DIR || ".cache";
-const CACHE_TTL = parseInt(process.env.CACHE_TTL || "3600", 10) * 1000;
-const CACHE_ENABLED = CACHE_TTL > 0;
-
-// Cache initialization on startup
-async function initCache(): Promise<void>
-
-// Cache operations with early returns when disabled
-async function getCachedPage(path: string): Promise<DocumentationPage | null>
-async function cachePage(path: string, page: DocumentationPage): Promise<void>
-```
-
 ### Benefits
 
 ✅ Dramatically faster response times (98% improvement)  
 ✅ Offline access to previously fetched pages  
-✅ Reduced load on TallStackUI website  
+✅ Reduced load on Larapex Charts documentation website  
 ✅ Easy cache management (rm -rf .cache)  
 ✅ No external dependencies  
 ✅ Configurable and optional
 
-## Question 2: VSCode Usage Documentation
-
-### Documentation Added
-
-1. **README.md Updates**
-   - New "With VSCode" section
-   - Cline extension setup (recommended)
-   - Continue extension alternative
-   - Configuration examples with absolute paths
-   - Important notes about path requirements
-
-2. **Example Configuration Files**
-   - `vscode_settings.example.json` - Complete working example
-   - Shows absolute paths for both server and cache directory
-   - Includes all environment variables
-
-3. **Setup Instructions**
-   - Step-by-step installation guide
-   - Configuration instructions for both extensions
-   - Usage tips and best practices
-   - Troubleshooting guidance
-
-### Key Documentation Points
-
-- Absolute paths required for reliable operation
-- Cache directory should use absolute path in VSCode
-- Extension restart required after configuration changes
-- Tips for verifying server connection
-
-## Files Modified/Created
+## Files Modified
 
 ### Core Implementation
-- `src/index.ts` - Added caching logic with all safeguards
-- `.gitignore` - Added .cache/ directory
+- `src/index.ts` - Updated for Larapex Charts documentation structure
+- `package.json` - Updated metadata and binary name
 
 ### Documentation
-- `README.md` - Added caching and VSCode sections
-- `CACHING.md` - New file with architecture details
-- `vscode_settings.example.json` - New example config file
-
-### Testing
-- `test-caching.mjs` - Verification script (gitignored)
-
-## Code Quality Improvements
-
-All code review feedback addressed:
-
-1. ✅ **Race Condition Fix** - initCache() ensures directory exists before writes
-2. ✅ **Consistent Expiry** - Uses cachedAt field for accurate expiration
-3. ✅ **CACHE_TTL=0 Support** - Properly disables all caching operations
-4. ✅ **Startup Optimization** - Cache directory created once at startup
-5. ✅ **Absolute Paths** - Documented and used in examples
-6. ✅ **Clear Error Messages** - Improved logging without contradictions
-7. ✅ **Accurate Documentation** - Clarified offline support as "previously fetched"
-
-## Security
-
-- ✅ CodeQL Analysis: 0 alerts
-- ✅ No vulnerabilities introduced
-- ✅ Safe file operations with MD5 hashing
-- ✅ No external dependencies added
-- ✅ Proper error handling
-
-## Testing
-
-Comprehensive testing completed:
-
-```
-✅ Caching enabled (CACHE_TTL=3600): 98% performance improvement
-✅ Caching disabled (CACHE_TTL=0): No cache files created
-✅ Race condition handling: No issues with concurrent requests
-✅ Cache expiration: Correctly expires after TTL
-✅ VSCode paths: Absolute paths work correctly
-```
+- `README.md` - Complete rewrite for Larapex Charts
+- `CACHING.md` - Updated examples
+- `IMPLEMENTATION_SUMMARY.md` - This file
 
 ## Environment Variables
 
@@ -133,7 +90,7 @@ Comprehensive testing completed:
 | `CACHE_DIR` | Cache directory location | `.cache` | `/absolute/path/.cache` |
 | `CACHE_TTL` | Cache expiration in seconds | `3600` | `7200` (2 hours), `0` (disabled) |
 | `MAX_CONTENT_SIZE` | Max content characters | `15000` | `20000` |
-| `TALLSTACKUI_DOCS_URL` | Base documentation URL | `https://tallstackui.com/docs/v2` | Custom URL |
+| `LARAPEX_DOCS_URL` | Base documentation URL | `https://larapex-charts.netlify.app` | Custom URL |
 
 ## Usage Examples
 
@@ -141,7 +98,7 @@ Comprehensive testing completed:
 ```json
 {
   "mcpServers": {
-    "tallstackui-docs": {
+    "larapex-charts-docs": {
       "command": "node",
       "args": ["/path/to/dist/index.js"]
     }
@@ -153,7 +110,7 @@ Comprehensive testing completed:
 ```json
 {
   "cline.mcpServers": {
-    "tallstackui-docs": {
+    "larapex-charts-docs": {
       "command": "node",
       "args": ["/absolute/path/to/dist/index.js"],
       "env": {
@@ -164,21 +121,30 @@ Comprehensive testing completed:
 }
 ```
 
-## Future Enhancements
+## Testing
 
-Potential improvements for future consideration:
+Verified functionality:
+- ✅ Build successful with TypeScript compilation
+- ✅ Server starts correctly
+- ✅ list_pages tool returns all 9 documentation pages
+- ✅ search_docs tool searches correctly across page names
+- ✅ Caching implementation preserved and working
+- ✅ All tool schemas updated correctly
 
-- Add cache statistics/metrics endpoint
-- Implement cache prewarming for common pages
-- Add cache compression for reduced storage
-- Support for cache invalidation via tool
-- Background cache refresh before expiration
+## About Larapex Charts
 
-## Conclusion
+Larapex Charts is a Laravel wrapper for the ApexCharts library, providing a simple way to create beautiful, interactive charts in Laravel applications. The documentation covers:
+- Installation and setup
+- Simple examples
+- Various chart types
+- Customization options
+- Integration with Eloquent
+- Integration with InertiaJS
+- Chart stubs for quick setup
+- Library hosting options
 
-Both requested features have been fully implemented, tested, and documented:
+For more information, visit [Larapex Charts Documentation](https://larapex-charts.netlify.app/).
 
-1. ✅ **Local caching** provides 98% performance improvement with proper TTL=0 support
-2. ✅ **VSCode documentation** enables easy setup with absolute path examples
+## License
 
-All code is production-ready, secure, and follows best practices.
+MIT

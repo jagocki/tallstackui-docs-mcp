@@ -1,11 +1,11 @@
-# TallStackUI MCP Server - Caching Architecture
+# Larapex Charts MCP Server - Caching Architecture
 
 ## How Caching Works
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Client Request                            │
-│            (get_component, get_page, etc.)                   │
+│            (get_page, search_docs, etc.)                     │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
@@ -22,9 +22,9 @@
             ▼               ▼
     ┌──────────────┐   ┌──────────────────┐
     │ Return       │   │ Fetch from Web   │
-    │ Cached Page  │   │ (tallstackui.com)│
-    │ (Fast!)      │   └────────┬─────────┘
-    └──────────────┘            │
+    │ Cached Page  │   │ (larapex-charts  │
+    │ (Fast!)      │   │  .netlify.app)   │
+    └──────────────┘   └────────┬─────────┘
                                 │
                                 ▼
                     ┌───────────────────────┐
@@ -48,15 +48,15 @@
 
 ```
 .cache/
-├── a1b2c3d4e5f6.json  (hashed: ui/button)
-├── f6e5d4c3b2a1.json  (hashed: form/input)
+├── a1b2c3d4e5f6.json  (hashed: installation)
+├── f6e5d4c3b2a1.json  (hashed: simple-example)
 └── ...
 
 Each cache file contains:
 {
-  "title": "Button",
-  "url": "https://tallstackui.com/docs/v2/ui/button",
-  "content": "Button component. ...",
+  "title": "Installation",
+  "url": "https://larapex-charts.netlify.app/installation",
+  "content": "Installation instructions. ...",
   "cachedAt": 1706234567890
 }
 ```

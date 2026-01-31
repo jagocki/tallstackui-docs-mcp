@@ -12,7 +12,7 @@ import { createHash } from "crypto";
 import { mkdir, readFile, writeFile, stat } from "fs/promises";
 import { join } from "path";
 
-const BASE_URL = process.env.TALLSTACKUI_DOCS_URL || "https://tallstackui.com/docs/v2";
+const BASE_URL = process.env.LARAPEX_DOCS_URL || "https://larapex-charts.netlify.app";
 const MAX_CONTENT_SIZE = parseInt(process.env.MAX_CONTENT_SIZE || "15000", 10);
 const CACHE_DIR = process.env.CACHE_DIR || ".cache";
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || "3600", 10) * 1000; // Default 1 hour in milliseconds
@@ -109,58 +109,22 @@ async function cachePage(path: string, page: DocumentationPage): Promise<void> {
   }
 }
 
-// Known documentation sections and components
-// Based on TallStackUI v2 GitHub repository and documentation site
+// Known documentation sections and pages
+// Based on Larapex Charts documentation site structure
 const KNOWN_SECTIONS = {
-  "getting-started": ["documentation", "installation", "configuration", "starter-kit"],
-  "ui": [
-    "alert",
-    "avatar",
-    "badge",
-    "banner",
-    "boolean",
-    "button",
-    "card",
-    "carousel",
-    "clipboard",
-    "dropdown",
-    "environment",
-    "icon",
-    "layout",
-    "link",
-    "loading",
-    "modal",
-    "progress",
-    "rating",
-    "signature",
-    "slide",
-    "stats",
-    "step",
-    "tab",
-    "table",
-    "toast",
-    "tooltip",
+  "examples": [
+    "installation",
+    "simple-example",
+    "more-charts",
+    "customization"
   ],
-  "form": [
-    "checkbox",
-    "color",
-    "currency",
-    "date",
-    "input",
-    "number",
-    "password",
-    "pin",
-    "radio",
-    "range",
-    "select",
-    "tag",
-    "textarea",
-    "time",
-    "toggle",
-    "upload",
-  ],
-  "interaction": ["dialog", "reaction"],
-  "other": ["theme", "helpers", "upgrade-guide"],
+  "advance": [
+    "charts-with-eloquent",
+    "charts-with-inertiajs",
+    "charts-stubs",
+    "host-library",
+    "support"
+  ]
 };
 
 /**
@@ -187,7 +151,7 @@ async function fetchDocPage(path: string): Promise<DocumentationPage> {
   // Extract title
   const title =
     $("h1").first().text().trim() ||
-    $("title").text().replace(" - TallStackUI", "").trim();
+    $("title").text().replace(" - Larapex Charts", "").replace(" | Larapex Charts", "").trim();
 
   // Extract main content
   // Remove navigation, header, footer, and scripts
@@ -247,7 +211,7 @@ function listComponents(): Record<string, string[]> {
 // Create server instance
 const server = new Server(
   {
-    name: "tallstackui-docs-mcp",
+    name: "larapex-charts-docs-mcp",
     version: "1.0.0",
   },
   {
@@ -262,13 +226,13 @@ const tools: Tool[] = [
   {
     name: "search_docs",
     description:
-      "Search TallStackUI documentation for components or topics. Returns a list of matching documentation pages.",
+      "Search Larapex Charts documentation for topics or keywords. Returns a list of matching documentation pages.",
     inputSchema: {
       type: "object",
       properties: {
         query: {
           type: "string",
-          description: "Search query (component name, topic, or keyword)",
+          description: "Search query (topic, chart type, or keyword)",
         },
       },
       required: ["query"],
@@ -277,42 +241,26 @@ const tools: Tool[] = [
   {
     name: "get_page",
     description:
-      "Get the content of a specific TallStackUI documentation page. Provide the path like 'ui/button' or 'form/input'.",
+      "Get the content of a specific Larapex Charts documentation page. Provide the path like 'installation' or 'examples/simple-example'.",
     inputSchema: {
       type: "object",
       properties: {
         path: {
           type: "string",
           description:
-            "Documentation page path (e.g., 'ui/button', 'form/input', 'documentation')",
+            "Documentation page path (e.g., 'installation', 'simple-example', 'customization')",
         },
       },
       required: ["path"],
     },
   },
   {
-    name: "list_components",
+    name: "list_pages",
     description:
-      "List all available TallStackUI components organized by category (UI, Form, Interaction, etc.).",
+      "List all available Larapex Charts documentation pages organized by category (Examples, Advance).",
     inputSchema: {
       type: "object",
       properties: {},
-    },
-  },
-  {
-    name: "get_component",
-    description:
-      "Get documentation for a specific TallStackUI component. Automatically determines if it's a UI or Form component.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        component: {
-          type: "string",
-          description:
-            "Component name (e.g., 'button', 'input', 'modal', 'select')",
-        },
-      },
-      required: ["component"],
     },
   },
 ];
@@ -356,16 +304,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "list_components": {
-        const components = listComponents();
+      case "list_pages": {
+        const pages = listComponents();
         return {
           content: [
             {
               type: "text",
               text: JSON.stringify(
                 {
-                  categories: components,
-                  total: Object.values(components).flat().length,
+                  categories: pages,
+                  total: Object.values(pages).flat().length,
                 },
                 null,
                 2
@@ -377,46 +325,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "get_page": {
         const path = args.path as string;
-        const page = await fetchDocPage(path);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(page, null, 2),
-            },
-          ],
-        };
-      }
-
-      case "get_component": {
-        const component = args.component as string;
-        let path = "";
-
-        // Try to find the component in known sections
-        for (const [section, pages] of Object.entries(KNOWN_SECTIONS)) {
-          if (pages.includes(component.toLowerCase())) {
-            path = `${section}/${component.toLowerCase()}`;
-            break;
-          }
-        }
-
-        if (!path) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify(
-                  {
-                    error: `Component '${component}' not found. Use list_components to see available components.`,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-          };
-        }
-
         const page = await fetchDocPage(path);
         return {
           content: [
@@ -462,7 +370,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("TallStackUI Documentation MCP Server running on stdio");
+  console.error("Larapex Charts Documentation MCP Server running on stdio");
 }
 
 main().catch((error) => {
